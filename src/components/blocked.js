@@ -17,7 +17,7 @@ const Blocked = (props) => {
 
 
     async function handleButton(){
-        setCerto(false)
+        setCerto(false) 
         setErrado(false)
        // console.log(chave)
         setCarregando(true)
