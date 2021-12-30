@@ -1,5 +1,8 @@
 import Header from '../components/header'
+import Blocked from '../components/blocked'
 import React, { useEffect, useState } from 'react';
+import Cookies from 'js-cookie';
+import axios from 'axios';
 const personagens =JSON.parse(httpGet('https://api-team-na.herokuapp.com/json_chars'));
 
 function httpGet(theUrl){
@@ -25,9 +28,12 @@ function Home() {
     const[descricao, setDescricao] = useState('')
     const[player, setPlayer] = useState('')
 
-    
+    const[chave, setChave] = useState(Cookies.get('chave')!='undefined'?Cookies.get('chave'):'')
+
+
 
     useEffect(()=> {
+       
       console.log(descricao)
     })
  
@@ -84,10 +90,14 @@ function Home() {
         setPesquisa('')
         
         atualizar=='b'?setAtualizar(''):setAtualizar('b');
-        }
+    }
 
     async function handleEnviar(){
         console.log(listaEquipes)
+        let listaAux = listaEquipes
+         setlistaEquipes({"token":"tetetoken",equipes:[]});
+        let enviado = await axios.put('https://api-team-na.herokuapp.com/add_chars', listaAux);
+
     }
 
 
@@ -96,11 +106,18 @@ function Home() {
     //estilos
     const body_all = {
         display:"flex",
+        position: "fixed",
+        top: "68px",
+        left: "0",
+        bottom: "0",
+        right: "0",
+    
+
 
     }
     const central = {
         width:"80%",
-        height:"600px",
+        height: "100%",
         backgroundColor:"#1114",
         display:"flex",
         flexDirection:"column",
@@ -171,7 +188,8 @@ function Home() {
 
 
     return (
-        <>
+        <>  
+            <Blocked chave={chave}/>
             <Header />
             <div style={body_all}>
                 <div style={central}>
