@@ -17,7 +17,7 @@ function httpGet(theUrl){
 function Home() {
 
     const[lista, setLista] = useState(personagens);
-    const[listaEquipes, setlistaEquipes] = useState({"token":"tetetoken",equipes:[]});
+    const[listaEquipes, setlistaEquipes] = useState({"token":Cookies.get('chave')!='undefined'?Cookies.get('chave'):'',equipes:[]});
 
     const [atual, setAtual] = useState();
     const[pesquisa, setPesquisa] = useState('');
