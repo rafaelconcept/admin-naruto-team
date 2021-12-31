@@ -30,7 +30,9 @@ function Home() {
 
     const[chave, setChave] = useState(Cookies.get('chave')!='undefined'?Cookies.get('chave'):'')
 
-
+    const[inserindo, setInserindo] = useState(false)
+    const[inserindoErro, setinserindoErro] = useState(false)
+    const[inserindoSuccess, setinserindoSuccess] = useState(false)
 
     useEffect(()=> {
        
@@ -93,19 +95,33 @@ function Home() {
     }
 
     async function handleEnviar(){
-        
-        let token = Cookies.get('chave');
+        setinserindoErro(false)
+        setinserindoSuccess(false)
+        if(inserindo==false){
+            setInserindo(true)
+            let token = Cookies.get('chave');
 
-        if(token.length>=1){
-            console.log('entrou aqui')
-            console.log(token)
-            listaEquipes.token = token
+            if(token.length>=1){
+                console.log('entrou aqui')
+                console.log(token)
+                listaEquipes.token = token
+            }
+            console.log(listaEquipes)
+            let listaAux = listaEquipes
+            
+            let enviado = await axios.put('https://api-team-na.herokuapp.com/add_chars', listaAux);
+            setInserindo(false)
+            if(enviado.data=="Atualizado"){
+                setlistaEquipes({"token":Cookies.get('chave')!='undefined'?Cookies.get('chave'):'',equipes:[]});
+                setinserindoSuccess(true)
+                await new Promise(r => setTimeout(r, 2000));
+                setinserindoSuccess(false)
+                
+            }
+            else{
+                setinserindoErro(true)
+            }
         }
-        console.log(listaEquipes)
-        let listaAux = listaEquipes
-        setlistaEquipes({"token":Cookies.get('chave')!='undefined'?Cookies.get('chave'):'',equipes:[]});
-        let enviado = await axios.put('https://api-team-na.herokuapp.com/add_chars', listaAux);
-
     }
 
 
@@ -193,7 +209,26 @@ function Home() {
         height:"40px",
         
     }
-
+    
+    const inserindo_carregando = {
+  
+        position: "absolute",
+        height: "100%",
+        marginTop:"10px",
+        paddingTop:"5px",
+        paddingBottom:"5px",
+        paddingLeft:"10px",
+        paddingRight:"10px",
+        display:inserindo==true?"flex":"none",
+        flexDirection:"column",
+        justifyContent:"center",
+        alignItems: "center",
+        zIndex:"10",
+        color:"white",
+        borderRadius:"5px"
+        
+    }
+  
 
     return (
         <>  
@@ -244,8 +279,31 @@ function Home() {
 
 
                 <div style={lista_equipes}>
+                    <div style={inserindo_carregando} >
+                        <div id="inserindo_carregando" style={{
+  
+                        height: "40px",
+                        backgroundColor:"#222020",
+                        marginTop:"10px",
+                        paddingTop:"5px",
+                        paddingBottom:"5px",
+                        paddingLeft:"10px",
+                        paddingRight:"10px",
+                        zIndex:"10",
+                        color:"white",
+                        borderRadius:"5px",
+                        display:"flex",
+                        flexDirection:"column",
+                        justifyContent:"center",
+                        alignItems: "center",
+                        
+                        }}>
+                            Inserindo
+                        </div>
+                    </div>
                     {console.log('ok')}
                     {listaEquipes.equipes.map((x, index)=>(
+                        
                         <div key={index} style={{backgroundColor:"rgb(162 157 157)", height:"40px", width:"120px", marginBottom:"10px"}}>
                             <img style={imagme_lateral} src={lista.filter(char=>char.nome.toLowerCase() == x["CHAR 1"].toLowerCase())[0].foto}/>
                             <img style={imagme_lateral} src={lista.filter(char=>char.nome.toLowerCase() == x["CHAR 2"].toLowerCase())[0].foto}/>
@@ -257,7 +315,41 @@ function Home() {
                               disabled={(listaEquipes.equipes.length<=0)?true:false}
                               onClick={(elemento)=>handleEnviar()}
                         >Enviar</button>
-                
+              
+                        <div id="inserindo_carregando_false" style={{                      
+                            backgroundColor:"#931212",
+                            marginTop:"10px",
+                            paddingTop:"5px",
+                            paddingBottom:"5px",
+                            paddingLeft:"10px",
+                            paddingRight:"10px",
+                            zIndex:"10",
+                            color:"white",
+                            borderRadius:"5px",
+                            display:inserindoErro==true?"flex":"none",
+                            flexDirection:"column",
+                            justifyContent:"center",
+                            alignItems: "center"
+                        }}>
+                            Erro ao inserir
+                        </div>
+                        <div id="inserindo_carregando_true" style={{                      
+                            backgroundColor:"#2a6022",
+                            marginTop:"10px",
+                            paddingTop:"5px",
+                            paddingBottom:"5px",
+                            paddingLeft:"10px",
+                            paddingRight:"10px",
+                            zIndex:"10",
+                            color:"white",
+                            borderRadius:"5px",
+                            display:inserindoSuccess==true?"flex":"none",
+                            flexDirection:"column",
+                            justifyContent:"center",
+                            alignItems: "center"
+                        }}>
+                            Inserido com sucesso!
+                        </div>
                     
                 </div>
             </div>
