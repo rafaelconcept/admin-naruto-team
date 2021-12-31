@@ -93,9 +93,17 @@ function Home() {
     }
 
     async function handleEnviar(){
+        
+        let token = Cookies.get('chave');
+
+        if(token.length>=1){
+            console.log('entrou aqui')
+            console.log(token)
+            listaEquipes.token = token
+        }
         console.log(listaEquipes)
         let listaAux = listaEquipes
-         setlistaEquipes({"token":"tetetoken",equipes:[]});
+        setlistaEquipes({"token":Cookies.get('chave')!='undefined'?Cookies.get('chave'):'',equipes:[]});
         let enviado = await axios.put('https://api-team-na.herokuapp.com/add_chars', listaAux);
 
     }
